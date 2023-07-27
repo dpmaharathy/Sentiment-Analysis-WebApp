@@ -1,0 +1,63 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Analysis Web App</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Additional CSS style to shift the box below the heading */
+    #reviewForm {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sentiment Analysis Web App</h1>
+  
+  <div class="div">
+    <form id="reviewForm">
+    <label for="review">Enter your review:</label><br>
+    <textarea id="review" name="review" rows="4" cols="50"></textarea><br>
+    <button type="submit">Analyze</button>
+  </form></div>
+  
+  <div id="result"></div>
+  <!-- <p>Talentserve</p>
+  <p>Created by Devi Prasad Maharathy</p> -->
+
+  <script>
+    const form = document.getElementById('reviewForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const review = formData.get('review');
+
+      fetch('/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ review })
+      })
+      .then(response => response.json())
+      .then(data => {
+        resultDiv.innerHTML = `
+          <h2>Analysis Result</h2>
+          <p>Score: ${data.score}</p>
+          <p>Comparative: ${data.comparative}</p>
+          <p>Positive Words: ${data.positive.join(', ')}</p>
+          <p>Negative Words: ${data.negative.join(', ')}</p>
+        `;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        resultDiv.innerHTML = '<p>Error occurred. Please try again later.</p>';
+      });
+    });
+  </script>
+</body>
+</html>
